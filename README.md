@@ -2,7 +2,6 @@
 
 > **Submission Track**: Agents for Good  
 > **Event**: Kaggle's AI Agents Intensive Vibe Coding Capstone  
-> **Deployment Readiness**: 100% Vercel compatible out-of-the-box (Zero-configuration fallback enabled).
 
 ---
 
@@ -77,56 +76,3 @@ graph TD
    ```env
    GEMINI_API_KEY=your_google_ai_studio_key_here
    ```
-
----
-
-## 🌍 Supabase Integration (Optional Upgrade)
-
-To enable database synchronization instead of client-side `localStorage`, execute the following SQL migration script in your Supabase SQL editor:
-
-```sql
--- Create Tasks Table
-CREATE TABLE public.tasks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    duration TEXT,
-    priority TEXT CHECK (priority IN ('high', 'medium', 'low')),
-    category TEXT DEFAULT 'Inbox',
-    status TEXT CHECK (status IN ('todo', 'done')) DEFAULT 'todo',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
-);
-
--- Create Goals Table
-CREATE TABLE public.goals (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    type TEXT CHECK (type IN ('daily', 'weekly', 'monthly')),
-    status TEXT CHECK (status IN ('todo', 'done')) DEFAULT 'todo',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
-);
-
--- Enable Row Level Security (RLS)
-ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.goals ENABLE ROW LEVEL SECURITY;
-
--- Create Policies
-CREATE POLICY "Users can manage their own tasks" 
-ON public.tasks FOR ALL USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can manage their own goals" 
-ON public.goals FOR ALL USING (auth.uid() = user_id);
-```
-
----
-
-## ⚡ Vercel Deployment
-
-LifePilot AI is structured to be deployed directly on **Vercel** with one click:
-
-1. Push your repository to GitHub/GitLab.
-2. Import the project into the [Vercel Dashboard](https://vercel.com).
-3. (Optional) Under **Environment Variables**, add:
-   - `GEMINI_API_KEY`: Your key from Google AI Studio.
-4. Click **Deploy**. Vercel will build the Next.js production bundle in seconds.
